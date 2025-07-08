@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Category;
+use App\Models\Brand;
 
 return new class extends Migration
 {
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->boolean('in_stock')->default(true);
             $table->boolean('on_sale')->default(false);
             $table->foreignIdFor(Category::class)->constrained('categories')->cascadeOnDelete();
+            $table->foreignIdFor(Brand::class)->constrained('brands')->cascadeOnDelete();
             $table->timestamps();
         });
     }
