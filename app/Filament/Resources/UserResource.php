@@ -11,12 +11,18 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
 
 class UserResource extends Resource
 {
@@ -28,23 +34,28 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required(),
-                TextInput::make('email')
-                        ->label('Email Address')
-                        ->maxLength(255)
-                        ->email()
-                        ->unique(ignoreRecord: true)
-                        ->required(),
-                DateTimePicker::make('email_verified_at')
-                        ->label('Email Verified At')
-                        ->default(now()),
-                TextInput::make('password')
-                        ->password()
-                        //will not be sent to the server unless filled (for update cases)
-                        ->dehydrated(fn ($state) => filled($state))
-                        //only required when creating a new record
-                        ->required(fn (Component $component) 
-                                    => $component->getLivewire() instanceof Pages\CreateUser)
+                Section::make([
+                    Grid::make()
+                    ->schema([
+                        TextInput::make('name')->required(),
+                        TextInput::make('email')
+                            ->label('Email Address')
+                            ->maxLength(255)
+                            ->email()
+                            ->unique(User::class, 'email', ignoreRecord: true)
+                            ->required(),
+                        DateTimePicker::make('email_verified_at')
+                            ->default(now()),
+                        TextInput::make('password')
+                            ->password()
+                            ->revealable()
+                            //will not be sent to the server unless filled (for update cases)
+                            ->dehydrated(fn ($state) => filled($state))
+                            //only required when creating a new record
+                            ->required(fn (Component $component) 
+                                    => $component->getLivewire() instanceof CreateUser)
+                    ])
+                ])    
             ]);
     }
 
@@ -52,18 +63,29 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('email')->searchable(),
-                TextColumn::make('email_verified_at')->dateTime()->sortable(),
-                TextColumn::make('created_at')->dateTime()->sortable()
+                TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('email'),
+                TextColumn::make('email_verified_at')
+                    ->since()
+                    ->dateTimeTooltip()
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->since()
+                    ->dateTimeTooltip()
+                    ->sortable(),
+
+                TextColumn::make('updated_at')
+                    ->since()
+                    ->dateTimeTooltip()    
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

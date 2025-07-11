@@ -26,6 +26,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -93,17 +94,25 @@ class ProductResource extends Resource
                     Section::make('Status')->schema([
                         Toggle::make('in_stock')
                             ->required()
+                            ->onColor('success')
+                            ->offColor('danger')
                             ->default(true),
                         
                         Toggle::make('is_active')
                             ->required()
+                            ->onColor('success')
+                            ->offColor('danger')
                             ->default(true),
                         
                         Toggle::make('is_featured')
+                            ->onColor('success')
+                            ->offColor('danger')    
                             ->required(),
                             
                             
                         Toggle::make('on_sale')
+                            ->onColor('success')
+                            ->offColor('danger')
                             ->required()     
                     ])
                 ])->columns(1)
@@ -118,10 +127,10 @@ class ProductResource extends Resource
                     ->searchable(),
                 
                 TextColumn::make('category.name')
-                    ->sortable(),
+                    ->searchable(),
 
                 TextColumn::make('brand.name')
-                    ->sortable(),
+                    ->searchable(),
                     
                 TextColumn::make('price')  
                     ->money('EGP')
@@ -145,14 +154,34 @@ class ProductResource extends Resource
                     ->relationship('category', 'name'),
                 
                 SelectFilter::make('brand')
-                    ->relationship('brand', 'name')    
+                    ->relationship('brand', 'name'),
+                
+                Filter::make('is_featured')
+                    ->toggle()
+                    ->label('Featured')
+                    ->query(fn (Builder $query): Builder => $query->where('is_featured', true)),
+                
+                Filter::make('on_sale')
+                    ->toggle()
+                    ->translateLabel()
+                    ->query(fn (Builder $query): Builder => $query->where('on_sale', true)),
+
+                Filter::make('in_stock')
+                    ->toggle()
+                    ->translateLabel()
+                    ->query(fn (Builder $query): Builder => $query->where('in_stock', true)),    
+                    
+                Filter::make('is_active')
+                    ->toggle()
+                    ->label('Active')
+                    ->query(fn (Builder $query): Builder => $query->where('is_active', true))    
             ])
             ->actions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
-                ]),
+                ])->tooltip('Actions'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
