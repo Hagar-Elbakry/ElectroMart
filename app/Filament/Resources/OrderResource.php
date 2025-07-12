@@ -242,16 +242,7 @@ class OrderResource extends Resource
                         'fedex' => 'FedEx',
                         'ups' => 'UPS',
                         'dhl' => 'DHL'
-                    ]),
-                    
-                SelectFilter::make('status')
-                    ->options([
-                        'new' => 'New',
-                        'processing' => 'Processing',
-                        'shipped' => 'Shipped',
-                        'delivered' => 'Delivered',
-                        'canceled' => 'Canceled' 
-                    ])    
+                    ])   
             ])
             ->actions([
                 ActionGroup::make([
