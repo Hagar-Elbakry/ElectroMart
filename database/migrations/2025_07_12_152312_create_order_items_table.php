@@ -3,8 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Order;
 use App\Models\Product;
+use App\Models\Order;
 
 return new class extends Migration
 {
@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('quantity')->default(1);
             $table->decimal('unit_amount',10,2)->nullable();
             $table->decimal('total_amount',10,2)->nullable();
-            $table->foreignId(Order::class)->constrained('orders')->cascadeOnDelete();
+            $table->foreignIdFor(Order::class)->constrained('orders')->cascadeOnDelete();
             $table->foreignIdFor(Product::class)->constrained('products')->cascadeOnDelete();
             $table->timestamps();
         });
