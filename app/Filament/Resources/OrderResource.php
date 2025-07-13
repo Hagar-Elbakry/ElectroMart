@@ -68,6 +68,7 @@ class OrderResource extends Resource
                                 'completed' => 'completed',
                                 'failed' => 'Failed'
                             ]),
+                            
                         
                         ToggleButtons::make('status')
                             ->default('new')
