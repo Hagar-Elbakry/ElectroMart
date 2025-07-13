@@ -1,40 +1,31 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\RelationManagers;
+namespace App\Filament\Widgets;
 
 use App\Filament\Resources\OrderResource;
-use App\Models\Order;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
+use App\Models\Order;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Widgets\TableWidget as BaseWidget;
 
-class OrdersRelationManager extends RelationManager
+class LatestOrders extends BaseWidget
 {
-    protected static string $relationship = 'orders';
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('id')
-                    ->required()
-                    ->maxLength(255),
-            ]);
-    }
-
+    protected int | string | array $columnSpan = 'full';
+    protected static ?int $sort = 2;
+    
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('id')
+            ->query(OrderResource::getEloquentQuery())
+                ->defaultPaginationPageOption(5)
+                ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('id'),
+
+                TextColumn::make('user.name')
+                    ->label('Customer')
+                    ->searchable(),
                 TextColumn::make('grand_total')
                     ->numeric()
                     ->money('EGP')
@@ -68,26 +59,13 @@ class OrdersRelationManager extends RelationManager
                 TextColumn::make('created_at')
                     ->label('Order Date')
                     ->since()
-                    ->timeTooltip()            
-                        
-            ])
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                
+                    ->timeTooltip()       
             ])
             ->actions([
                 Action::make('View Order')
                     ->url(fn (Order $record): string => OrderResource::getUrl('view', ['record' => $record]))
                     ->color('info')
-                    ->icon('heroicon-o-eye'),
-                DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                    ->icon('heroicon-o-eye')   
+            ]);     
     }
 }
