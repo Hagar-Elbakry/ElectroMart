@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomePage::class);
 Route::get('/categories', CategoriesPage::class);
 Route::get('/products', ProductsPage::class);
-Route::get('/products/{product}', ProductPage::class);
+Route::get('/products/{slug}', ProductPage::class);
 Route::get('/cart', CartPage::class);
 Route::get('/checkout', CheckoutPage::class);
 Route::get('/orders', OrdersPage::class);

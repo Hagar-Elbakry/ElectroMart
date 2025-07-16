@@ -7,7 +7,7 @@ use Livewire\Attributes\Title;
 
 use Livewire\Component;
 
-#[Title('Categories')] 
+#[Title('Categories | ElectroMart')] 
 
 class CategoriesPage extends Component
 {
