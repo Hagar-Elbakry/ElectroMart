@@ -169,8 +169,8 @@
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-4 md:grid-cols-2">
     @foreach($brands as $brand)
       <div class="bg-white rounded-lg shadow-md dark:bg-gray-800" wire:key="{{$brand->id}}">
-        <a href="" class="">
-          <img src="storage/{{$brand->image}}" alt="{{$brand->name}}" class="object-cover w-full h-64 rounded-t-lg">
+        <a href="products/?selected_brands[0]={{$brand->id}}" class="">
+          <img src="/storage/{{$brand->image}}" alt="{{$brand->name}}" class="object-cover w-full h-64 rounded-t-lg">
         </a>
         <div class="p-5 text-center">
           <a href="" class="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-300">
@@ -212,11 +212,11 @@
   <div class="max-w-[85rem] px-4 sm:px-6 lg:px-8 mx-auto">
     <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
     @foreach($categories as $category)
-      <a class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md transition dark:bg-slate-900 dark:border-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#" wire:key="{{$category->id}}">
+      <a class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md transition dark:bg-slate-900 dark:border-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="products/?selected_categories[0]={{$category->id}}" wire:key="{{$category->id}}">
         <div class="p-4 md:p-5">
           <div class="flex justify-between items-center">
             <div class="flex items-center">
-              <img class="h-[2.375rem] w-[2.375rem] rounded-full" src="storage/{{$category->image}}" alt="{{$category->name}}">
+              <img class="h-[2.375rem] w-[2.375rem] rounded-full" src="/storage/{{$category->image}}" alt="{{$category->name}}">
               <div class="ms-3">
                 <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-gray-400 dark:text-gray-200">
                   {{$category->name}}
