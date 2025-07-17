@@ -3,12 +3,11 @@
 namespace App\Helpers;
 
 use App\Models\Product;
-use GuzzleHttp\Handler\Proxy;
 use Illuminate\Support\Facades\Cookie;
 
 class CartManagement {
 
-    static public function addToCart($product_id) {
+    static public function addItemToCart($product_id) {
         $cart_items = Self::getCartItemsFromCookie();
         $existing_item = null;
 
@@ -19,19 +18,22 @@ class CartManagement {
             }
         }
 
-        if($existing_item != null) {
-            $cart_items[$$existing_item]['quantity']++;
-            $cart_items[$$existing_item]['total_amount'] = $cart_items[$$existing_item]['quantity'] * $cart_items[$key]['unit_amount'];
+        if($existing_item !== null) {
+            $cart_items[$existing_item]['quantity']++;
+            $cart_items[$existing_item]['total_amount'] = $cart_items[$existing_item]['quantity'] * $cart_items[$key]['unit_amount'];
         } else {
-            $product = Product::where('product_id', $product_id)->first(['id', 'name', 'images', 'price']);
-            $cart_items [] = [
-                'product_id' => $product->id,
-                'name' => $product->name,
-                'image' => $product->images[0],
-                'unit_amount' => $product->price,
-                'quantity' => 1,
-                'total_amount' => $product->price
-            ];
+            $product = Product::where('id', $product_id)->first(['id', 'name', 'images', 'price']);
+            if($product) {
+                $cart_items[] = [
+                    'product_id' => $product->id,
+                    'name' => $product->name,
+                    'image' => $product->images[0],
+                    'unit_amount' => $product->price,
+                    'quantity' => 1,
+                    'total_amount' => $product->price
+                ];
+            }
+            
         }
 
         self::addCartItemsToCookie($cart_items);
@@ -52,7 +54,7 @@ class CartManagement {
     }
 
     static public function addCartItemsToCookie($cart_items) {
-        Cookie::queue('cart_items', json_encode($cart_items), '60*24*30');
+        Cookie::queue('cart_items', json_encode($cart_items), 60*24*30);
     }
 
     static public function clearCartItemsFromCookie() {
@@ -75,8 +77,6 @@ class CartManagement {
             if($item['product_id'] == $product_id) {
                 $cart_items[$key]['quantity']++;
                 $cart_items[$key]['total_amount'] = $cart_items[$key]['quantity'] * $cart_items[$key]['unit_amount'];
-
-                break;
             }
         }
 
@@ -91,8 +91,6 @@ class CartManagement {
                 if($cart_items[$key]['quantity'] > 1) {
                     $cart_items[$key]['quantity']--;
                     $cart_items[$key]['total_amount'] = $cart_items[$key]['quantity'] * $cart_items[$key]['unit_amount'];
-
-                    break;
                 }
             }
         }
