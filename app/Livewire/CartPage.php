@@ -7,10 +7,10 @@ use App\Livewire\Partials\Navbar;
 use Livewire\Component;
 use Livewire\Attributes\Title;
 
+#[Title('Cart | ElectroMart')]
 class CartPage extends Component
 {
-    #[Title('Cart | ElectroMart')]
-
+    
     public $cart_items = [];
     public $grand_total;
 
