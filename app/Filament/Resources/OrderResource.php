@@ -271,6 +271,10 @@ class OrderResource extends Resource
         return static::getModel()::count();
     }
 
+    public static function getNavigationBadgeTooltip(): ?string {
+        return 'The number of orders';
+    }
+
     public static function getNavigationBadgeColor(): ?string {
         return static::getModel()::count() > 10 ? 'success' : 'danger';
     }

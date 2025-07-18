@@ -21,6 +21,11 @@ class ProductPage extends Component
         $this->quantity++;
     }
 
+    public function decreaseQty() {
+        if($this->quantity > 1)
+        $this->quantity--;
+    }
+
     public function addToCart($product_id) {
         $total_count = CartManagement::addItemToCart($product_id);
 
@@ -34,10 +39,6 @@ class ProductPage extends Component
         ->show();
     }
 
-    public function decreaseQty() {
-        if($this->quantity > 1)
-        $this->quantity--;
-    }
 
     public function mount($slug) {
         $this->slug = $slug;
