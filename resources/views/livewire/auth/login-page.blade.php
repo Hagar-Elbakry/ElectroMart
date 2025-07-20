@@ -17,6 +17,12 @@
 
           <!-- Form -->
           <form method="post" wire:submit.prevent="save">
+
+            @if(session('error'))
+              <div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4 mb-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+                <span id="hs-solid-color-danger-label" class="font-bold">{{session('error')}}</span>
+              </div>
+            @endif
             <div class="grid gap-y-4">
               <!-- Form Group -->
               <div>
@@ -41,7 +47,7 @@
               <div>
                 <div class="flex justify-between items-center">
                   <label for="password" class="block text-sm mb-2 dark:text-white">Password</label>
-                  <a class="text-sm text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/forgot">Forgot password?</a>
+                  <a class="text-sm text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/forget-password">Forgot password?</a>
                 </div>
                 <div class="relative">
                   <input type="password" id="password" wire:model="password" class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600" aria-describedby="password-error">

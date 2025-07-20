@@ -38,8 +38,8 @@ Route::get('/cart', CartPage::class);
 Route::middleware('guest')->group(function() {
     Route::get('/login', LoginPage::class)->name('login');
     Route::get('/register', RegisterPage::class);
-    Route::get('/forget', ForgetPage::class);
-    Route::get('/reset', ResetPage::class);
+    Route::get('/forget-password', ForgetPage::class)->name('password.request');
+    Route::get('/reset-password/{token}', ResetPage::class)->name('password.reset');
 });
 
 Route::middleware('auth')->group(function() {
