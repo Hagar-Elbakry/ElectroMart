@@ -14,7 +14,7 @@
           </div>
           <hr class="my-5 border-slate-300">
           <!-- Form -->
-          <form method="post" wire:submit.prevent="save">
+          <form wire:submit.prevent="save">
             <div class="grid gap-y-4">
               <!-- Form Group -->
 

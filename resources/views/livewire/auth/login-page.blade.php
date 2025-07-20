@@ -16,7 +16,7 @@
           <hr class="my-5 border-slate-300">
 
           <!-- Form -->
-          <form method="post" wire:submit.prevent="save">
+          <form wire:submit.prevent="save">
 
             @if(session('error'))
               <div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4 mb-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
