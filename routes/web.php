@@ -28,7 +28,7 @@ use League\Csv\Query\Row;
 |
 */
 
-Route::get('/', HomePage::class);
+Route::get('/', HomePage::class)->name('home');
 Route::get('/categories', CategoriesPage::class);
 Route::get('/products', ProductsPage::class);
 Route::get('/products/{slug}', ProductPage::class);
@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function() {
     });
     Route::get('/checkout', CheckoutPage::class);
     Route::get('/orders', OrdersPage::class);
-    Route::get('/orders/{order}', OrderPage::class)->name('orders.show');
+    Route::get('/orders/{order_id}', OrderPage::class)->name('orders.show');
     Route::get('/success', SuccessPage::class);
     Route::get('/cancel', CancelPage::class);
 });
