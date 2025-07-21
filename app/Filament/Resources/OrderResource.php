@@ -202,13 +202,18 @@ class OrderResource extends Resource
 
                
                 TextColumn::make('payment_method'),
-                TextColumn::make('payment_status'),
+                SelectColumn::make('payment_status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'completed' => 'completed',
+                        'failed' => 'Failed'
+                    ]),
 
                 TextColumn::make('currency'),
 
                 TextColumn::make('shipping_method'),
 
-                 SelectColumn::make('status')
+                SelectColumn::make('status')
                     ->options([
                         'new' => 'New',
                         'processing' => 'Processing',
