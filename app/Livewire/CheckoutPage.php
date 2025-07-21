@@ -3,10 +3,12 @@
 namespace App\Livewire;
 
 use App\Helpers\CartManagement;
+use App\Mail\OrderPlaced;
 use App\Models\Address;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use App\Models\Order;
+use Illuminate\Support\Facades\Mail;
 
 #[Title('Checkout')]
 
@@ -78,7 +80,7 @@ class CheckoutPage extends Component
         }
         
         CartManagement::clearCartItemsFromCookie();
-
+        Mail::to(auth()->user())->send(new OrderPlaced($order));
         return redirect('/success');
     }
 
