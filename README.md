@@ -1,6 +1,6 @@
 # ElectroMart
 
-**ElectroMart** is a e-commerce web application built using **Laravel** and powered by **Filament Admin Panel**. The platform allows users to browse and purchase electronic products, while providing administrators with powerful tools to manage products, orders, users and more.
+**ElectroMart** is an e-commerce web application built using **Laravel** and powered by **Filament Admin Panel**. The platform allows users to browse and purchase electronic products, while providing administrators with powerful tools to manage products, orders, users and more.
 
 ---
 
