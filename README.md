@@ -61,7 +61,7 @@
 
 ### Installation
 ```bash
-git clone https://github.com/Hagar-Elbakry/electromart.git
+git clone https://github.com/Hagar-Elbakry/ElectroMart.git
 cd electromart
 composer install
 npm install && npm run dev
