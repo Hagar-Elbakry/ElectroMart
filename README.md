@@ -68,6 +68,7 @@ npm install && npm run dev
 cp .env.example .env
 php artisan key:generate
 php artisan migrate
+php artisan storage:link
 php artisan serve
 ```
 **Make Sure** to set up your `.env` file with correct database and mail configurations.
