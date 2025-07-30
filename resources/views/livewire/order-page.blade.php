@@ -83,7 +83,7 @@
                 } else if($order->status == 'processing') {
                   $status = '<span class="bg-orange-500 py-1 px-3 rounded text-white shadow">Processing</span>';
                 } else if($order->status == 'shipped') {
-                  $status = '<span class="bg-gray-500 py-1 px-3 rounded text-white shadow">Shipped</span>';
+                  $status = '<span class="bg-gray-500 py-1 px-3 rounded text-black shadow">Shipped</span>';
                 } else if($order->status == 'delivered') {
                   $status = '<span class="bg-green-500 py-1 px-3 rounded text-white shadow">Delivered</span>';
                 } else if($order->status == 'canceled') {
@@ -91,7 +91,7 @@
                 }
 
                 if($order->payment_status == 'pending') {
-                  $payment_status = '<span class="bg-gray-500 py-1 px-3 rounded text-white shadow">Pending</span>';
+                  $payment_status = '<span class="bg-gray-500 py-1 px-3 rounded text-black shadow">Pending</span>';
                 } else if($order->payment_status == 'completed') {
                   $payment_status = '<span class="bg-green-500 py-1 px-3 rounded text-white shadow">Completed</span>';
                 } else if($order->payment_status == 'failed') {
@@ -166,7 +166,7 @@
               <td class="py-4">{{Number::currency($item['total_amount'], 'EGP')}}</td>
             </tr>
           @endforeach
-           
+
           </tbody>
         </table>
       </div>

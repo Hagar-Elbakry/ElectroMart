@@ -12,12 +12,12 @@ use Livewire\Component;
 
 class OrderPage extends Component
 {
-    public $order_id;
+    public $order_id, $order;
 
     public function mount($order_id) {
         $this->order_id = $order_id;
-        $order = Order::where('id', $this->order_id)->firstOrFail();
-        if($order->user_id != auth()->user()->id) {
+        $this->order = Order::where('id', $this->order_id)->firstOrFail();
+        if($this->order->user_id != auth()->user()->id) {
             abort(403);
         }
     }
@@ -26,11 +26,11 @@ class OrderPage extends Component
     public function render()
     {
         $order_items = OrderItem::with('product')->where('order_id', $this->order_id)->get();
-        $order = Order::where('id', $this->order_id)->first();
+//        $order = Order::where('id', $this->order_id)->first();
         $address = Address::where('order_id', $this->order_id)->first();
         return view('livewire.order-page', [
             'order_items' => $order_items,
-            'order' => $order,
+            'order' => $this->order,
             'address' => $address
         ]);
     }
