@@ -50,14 +50,15 @@ class UserResource extends Resource
                             ->default(now()),
                         TextInput::make('password')
                             ->password()
+                            ->hiddenOn('edit')
                             ->revealable()
                             //will not be sent to the server unless filled (for update cases)
                             ->dehydrated(fn ($state) => filled($state))
                             //only required when creating a new record
-                            ->required(fn (Component $component) 
+                            ->required(fn (Component $component)
                                     => $component->getLivewire() instanceof CreateUser)
                     ])
-                ])    
+                ])
             ]);
     }
 
@@ -79,7 +80,7 @@ class UserResource extends Resource
 
                 TextColumn::make('updated_at')
                     ->since()
-                    ->dateTimeTooltip()    
+                    ->dateTimeTooltip()
             ])
             ->filters([
                 //
