@@ -49,19 +49,19 @@ class ProductResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (Set $set, ?string $state) 
+                            ->afterStateUpdated(fn (Set $set, ?string $state)
                                                         => $set('slug', Str::slug($state))),
                         TextInput::make('slug')
                             ->required()
                             ->disabled()
                             ->dehydrated()
                             ->unique(Product::class, 'slug', ignoreRecord:true),
-                        
+
                         MarkdownEditor::make('description')
                             ->columnSpanFull()
-                            ->fileAttachmentsDirectory('products')    
+                            ->fileAttachmentsDirectory('products')
                     ])->columns(2),
-                    
+
                     Section::make('Images')->schema([
                         FileUpload::make('images')
                             ->multiple()
@@ -89,7 +89,7 @@ class ProductResource extends Resource
                             ->required()
                             ->searchable()
                             ->preload()
-                            ->relationship('brand', 'name')    
+                            ->relationship('brand', 'name')
                     ]),
 
                     Section::make('Status')->schema([
@@ -98,23 +98,23 @@ class ProductResource extends Resource
                             ->onColor('success')
                             ->offColor('danger')
                             ->default(true),
-                        
+
                         Toggle::make('is_active')
                             ->required()
                             ->onColor('success')
                             ->offColor('danger')
                             ->default(true),
-                        
+
                         Toggle::make('is_featured')
                             ->onColor('success')
-                            ->offColor('danger')    
+                            ->offColor('danger')
                             ->required(),
-                            
-                            
+
+
                         Toggle::make('on_sale')
                             ->onColor('success')
                             ->offColor('danger')
-                            ->required()     
+                            ->required()
                     ])
                 ])->columns(1)
             ])->columns(3);
@@ -126,42 +126,46 @@ class ProductResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
-                
+
                 TextColumn::make('category.name')
                     ->searchable(),
 
                 TextColumn::make('brand.name')
                     ->searchable(),
-                    
-                TextColumn::make('price')  
+
+                TextColumn::make('price')
                     ->money('EGP')
                     ->sortable(),
-                
+
                 IconColumn::make('is_featured')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->boolean(),
-                    
+
                 IconColumn::make('on_sale')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->boolean(),
-                    
+
                 IconColumn::make('in_stock')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->boolean(),
-                    
+
                 IconColumn::make('is_active')
-                    ->boolean()    
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->boolean()
 
             ])
             ->filters([
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
-                
+
                 SelectFilter::make('brand')
                     ->relationship('brand', 'name'),
-                
+
                 Filter::make('is_featured')
                     ->toggle()
                     ->label('Featured')
                     ->query(fn (Builder $query): Builder => $query->where('is_featured', true)),
-                
+
                 Filter::make('on_sale')
                     ->toggle()
                     ->translateLabel()
@@ -170,12 +174,12 @@ class ProductResource extends Resource
                 Filter::make('in_stock')
                     ->toggle()
                     ->translateLabel()
-                    ->query(fn (Builder $query): Builder => $query->where('in_stock', true)),    
-                    
+                    ->query(fn (Builder $query): Builder => $query->where('in_stock', true)),
+
                 Filter::make('is_active')
                     ->toggle()
                     ->label('Active')
-                    ->query(fn (Builder $query): Builder => $query->where('is_active', true))    
+                    ->query(fn (Builder $query): Builder => $query->where('is_active', true))
             ])
             ->actions([
                 ActionGroup::make([
