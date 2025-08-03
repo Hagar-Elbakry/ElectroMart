@@ -67,20 +67,8 @@ class OrderResource extends Resource
                             ->inline()
                             ->required()
                             ->options(OrderStatus::class)
-                            ->colors([
-                                'new' => 'info',
-                                'processing' => 'warning',
-                                'shipped' => 'gray',
-                                'delivered' => 'success',
-                                'canceled' => 'danger'
-                            ])
-                            ->icons([
-                                'new' => 'heroicon-o-sparkles',
-                                'processing' => 'heroicon-o-arrow-path',
-                                'shipped' => 'heroicon-o-truck',
-                                'delivered' => 'heroicon-o-check-circle',
-                                'canceled' => 'heroicon-o-x-circle'
-                            ]),
+                            ->colors(OrderStatus::colors())
+                            ->icons(OrderStatus::icons()),
 
                         Select::make('Currency')
                             ->default('egp')
@@ -92,8 +80,6 @@ class OrderResource extends Resource
 
                         Textarea::make('notes')
                             ->columnSpanFull()
-
-
 
                     ])->columns(2),
 

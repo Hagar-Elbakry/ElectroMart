@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
 use App\Filament\Resources\OrderResource;
 use App\Models\Order;
 use Filament\Tables\Actions\DeleteAction;
@@ -39,43 +41,27 @@ class OrdersRelationManager extends RelationManager
                     ->numeric()
                     ->money('EGP')
                     ->sortable(),
-                
-                TextColumn::make('status')    
+
+                TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                                'new' => 'info',
-                                'processing' => 'warning',
-                                'shipped' => 'gray',
-                                'delivered' => 'success',
-                                'canceled' => 'danger'
-                            })
-                    ->icon(fn(string $state): string => match ($state) {
-                                'new' => 'heroicon-o-sparkles',
-                                'processing' => 'heroicon-o-arrow-path',
-                                'shipped' => 'heroicon-o-truck',
-                                'delivered' => 'heroicon-o-check-circle',
-                                'canceled' => 'heroicon-o-x-circle'
-                            }),
-                            
+                    ->color(fn(string $state) => OrderStatus::from($state)->color())
+                    ->icon(fn(string $state) => OrderStatus::from($state)->icon()),
+
                 TextColumn::make('payment_method'),
                 TextColumn::make('payment_status')
                             ->badge()
-                            ->color(fn (string $state): string => match ($state) {
-                                'pending' => 'gray',
-                                'completed' => 'success',
-                                'failed' => 'danger'
-                            }),
+                            ->color(fn(string $state) => PaymentStatus::from($state)->color()),
                 TextColumn::make('created_at')
                     ->label('Order Date')
                     ->since()
-                    ->timeTooltip()            
-                        
+                    ->timeTooltip()
+
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                
+
             ])
             ->actions([
                 Action::make('View Order')

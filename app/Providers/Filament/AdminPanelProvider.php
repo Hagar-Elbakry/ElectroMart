@@ -23,7 +23,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 class AdminPanelProvider extends PanelProvider
 {
 
-    
+
 
     public function panel(Panel $panel): Panel
     {
@@ -34,7 +34,10 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Blue,
+                'blue' => Color::Blue,
+                'yellow' => Color::Yellow,
+                'green' => Color::Green,
+                'red' => Color::Red,
             ])
             ->font('Winky Rough', provider: GoogleFontProvider::class)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

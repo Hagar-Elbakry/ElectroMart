@@ -31,4 +31,28 @@ enum OrderStatus :string
         };
     }
 
+    public function icon(): ?string {
+        return match ($this) {
+            self::New => 'heroicon-o-sparkles',
+            self::Processing => 'heroicon-o-arrow-path',
+            self::Shipped => 'heroicon-o-truck',
+            self::Delivered => 'heroicon-o-check-circle',
+            self::Canceled => 'heroicon-o-x-circle',
+        };
+    }
+
+    public static function colors(): array
+    {
+        return collect(self::cases())
+            ->mapWithKeys(fn ($case) => [$case->value => $case->color()])
+            ->toArray();
+    }
+
+    public static function icons(): array
+    {
+        return collect(self::cases())
+            ->mapWithKeys(fn ($case) => [$case->value => $case->icon()])
+            ->toArray();
+    }
+
 }
