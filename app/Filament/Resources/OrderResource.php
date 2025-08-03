@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\Orders\Currency;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentMethod;
+use App\Enums\Orders\PaymentStatus;
 use App\Filament\Resources\OrderResource\Pages;
-use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Filament\Resources\OrderResource\RelationManagers\AddressRelationManager;
 use App\Models\Order;
 use App\Models\Product;
-use Dom\Text;
-use Filament\Forms;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -19,20 +20,18 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Number;
 
 class OrderResource extends Resource
@@ -54,41 +53,27 @@ class OrderResource extends Resource
                             ->preload()
                             ->searchable()
                             ->required(),
-                        
+
                         Select::make('payment_method')
                             ->required()
-                            ->options([
-                                'cash' => 'Cash',
-                                'credit cards' => 'Credit Cards'
-                            ]), 
-                        
+                            ->options(PaymentMethod::class),
+
                         Select::make('payment_status')
                             ->default('pending')
-                            ->options([
-                                'pending' => 'Pending',
-                                'completed' => 'completed',
-                                'failed' => 'Failed'
-                            ]),
-                            
-                        
+                            ->options(PaymentStatus::class),
+
                         ToggleButtons::make('status')
                             ->default('new')
                             ->inline()
                             ->required()
-                            ->options([
-                                'new' => 'New',
-                                'processing' => 'Processing',
-                                'shipped' => 'Shipped',
-                                'delivered' => 'Delivered',
-                                'canceled' => 'Canceled'
-                            ])
+                            ->options(OrderStatus::class)
                             ->colors([
                                 'new' => 'info',
                                 'processing' => 'warning',
                                 'shipped' => 'gray',
                                 'delivered' => 'success',
                                 'canceled' => 'danger'
-                            ])   
+                            ])
                             ->icons([
                                 'new' => 'heroicon-o-sparkles',
                                 'processing' => 'heroicon-o-arrow-path',
@@ -96,73 +81,64 @@ class OrderResource extends Resource
                                 'delivered' => 'heroicon-o-check-circle',
                                 'canceled' => 'heroicon-o-x-circle'
                             ]),
-                        
+
                         Select::make('Currency')
                             ->default('egp')
                             ->required()
-                            ->options([
-                                'egp' => 'EGP',
-                                'eur' => 'EUR',
-                                'sar' => 'SAR',
-                                'usd' => 'USD'
-                            ]),
-                            
+                            ->options(Currency::class),
+
                         Select::make('shipping_method')
-                            ->options([
-                                'fedex' => 'FedEx',
-                                'ups' => 'UPS',
-                                'dhl' => 'DHL'
-                            ]),
-                            
-                        Textarea::make('notes') 
-                            ->columnSpanFull()    
+                            ->options(PaymentMethod::class),
+
+                        Textarea::make('notes')
+                            ->columnSpanFull()
 
 
 
                     ])->columns(2),
-                    
+
                     Section::make('Order Items')->schema([
                         Repeater::make('items')
                             ->relationship()
-                            ->schema([  
+                            ->schema([
                                 Select::make('product_id')
                                     ->label('Product')
-                                    ->relationship('product', 'name') 
+                                    ->relationship('product', 'name')
                                     ->preload()
                                     ->searchable()
                                     ->distinct()
                                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                     ->reactive()
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) 
+                                    ->afterStateUpdated(fn (Set $set, ?string $state)
                                                         => $set('unit_amount', Product::find($state)?->price ?? 0))
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) 
+                                    ->afterStateUpdated(fn (Set $set, ?string $state)
                                                         => $set('total_amount', Product::find($state)?->price ?? 0))
                                     ->required()
                                     ->columnSpan(4),
-                                
+
                                 TextInput::make('quantity')
                                     ->numeric()
                                     ->default(1)
                                     ->minValue(1)
                                     ->required()
                                     ->reactive()
-                                    ->afterStateUpdated(fn (Set $set, Get $get, ?string $state) 
+                                    ->afterStateUpdated(fn (Set $set, Get $get, ?string $state)
                                                         => $set('total_amount', $state*$get('unit_amount')))
                                     ->columnSpan(2),
-                                
-                                TextInput::make('unit_amount') 
+
+                                TextInput::make('unit_amount')
                                     ->numeric()
                                     ->disabled()
                                     ->dehydrated()
                                     ->required()
                                     ->columnSpan(3),
-                                    
+
                                 TextInput::make('total_amount')
                                     ->numeric()
                                     ->required()
                                     ->disabled()
                                     ->dehydrated()
-                                    ->columnSpan(3)   
+                                    ->columnSpan(3)
 
                             ])->columns(12),
 
@@ -176,14 +152,14 @@ class OrderResource extends Resource
                                     foreach($repeaters as $repeater => $value) {
                                         $total += $get("items.{$repeater}.total_amount");
                                     }
-                                    
+
                                     $set('grand_total', $total);
                                     return Number::currency($total, 'EGP');
                                 }
                             }),
-                            
+
                         Hidden::make('grand_total')
-                            ->default(0)   
+                            ->default(0)
                     ])
                 ])->columnSpanFull()
             ]);
@@ -202,56 +178,30 @@ class OrderResource extends Resource
                     ->numeric()
                     ->money('EGP'),
 
-               
+
                 TextColumn::make('payment_method'),
                 SelectColumn::make('payment_status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'completed' => 'completed',
-                        'failed' => 'Failed'
-                    ]),
+                    ->options(PaymentStatus::class),
 
                 TextColumn::make('currency'),
 
                 TextColumn::make('shipping_method'),
 
                 SelectColumn::make('status')
-                    ->options([
-                        'new' => 'New',
-                        'processing' => 'Processing',
-                        'shipped' => 'Shipped',
-                        'delivered' => 'Delivered',
-                        'canceled' => 'Canceled' 
-                    ]),    
+                    ->options(OrderStatus::class),
             ])
             ->filters([
                 SelectFilter::make('payment_method')
-                    ->options([
-                        'cash' => 'Cash',
-                        'credit cards' => 'Credit Cards'
-                    ]),
-                
+                    ->options(PaymentMethod::class),
+
                 SelectFilter::make('payment_status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'completed' => 'completed',
-                        'failed' => 'Failed'
-                    ]),
-                    
-                SelectFilter::make('currency') 
-                    ->options([
-                        'egp' => 'EGP',
-                        'eur' => 'EUR',
-                        'sar' => 'SAR',
-                        'usd' => 'USD'
-                    ]),
-                
-                SelectFilter::make('shipping_method')   
-                    ->options([
-                        'fedex' => 'FedEx',
-                        'ups' => 'UPS',
-                        'dhl' => 'DHL'
-                    ])   
+                    ->options(PaymentStatus::class),
+
+                SelectFilter::make('currency')
+                    ->options(Currency::class),
+
+                SelectFilter::make('shipping_method')
+                    ->options(PaymentMethod::class)
             ])
             ->actions([
                 ActionGroup::make([
