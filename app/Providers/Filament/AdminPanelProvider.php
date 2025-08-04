@@ -38,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
                 'yellow' => Color::Yellow,
                 'green' => Color::Green,
                 'red' => Color::Red,
+                'primary' => Color::Blue
             ])
             ->font('Winky Rough', provider: GoogleFontProvider::class)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

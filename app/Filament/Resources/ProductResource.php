@@ -6,6 +6,12 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Dom\Text;
+use Filament\Infolists\Components\Component;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -38,6 +44,7 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?int $navigationSort = 5;
+    protected static string $view = 'filament.resources.products.pages.view-product';
 
     public static function form(Form $form): Form
     {
@@ -62,7 +69,9 @@ class ProductResource extends Resource
                             ->fileAttachmentsDirectory('products')
                     ])->columns(2),
 
-                    Section::make('Images')->schema([
+                    Section::make('Images')
+                        //->hidden(fn ($get) => empty($get('images')))
+                        ->schema([
                         FileUpload::make('images')
                             ->multiple()
                             ->reorderable()
@@ -117,6 +126,50 @@ class ProductResource extends Resource
                             ->required()
                     ])
                 ])->columns(1)
+            ])->columns(3);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Grid::make()->schema([
+                    \Filament\Infolists\Components\Section::make('Product Information')->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('slug'),
+
+                        TextEntry::make('description')->markdown()->columnSpanFull()
+                    ])->columns(2),
+                    \Filament\Infolists\Components\Section::make('Images')
+                        ->hidden(fn ($record) => empty($record->images))
+                        ->schema([
+                        ImageEntry::make('images')
+                            ->limit(3)
+                            ->limitedRemainingText()
+                            ->width(200)
+                    ])
+                ]),
+                Grid::make()->schema([
+                    \Filament\Infolists\Components\Section::make('Price')->schema([
+                        TextEntry::make('price')
+                            ->numeric()
+                            ->Money('EGP')
+                    ]),
+                    \Filament\Infolists\Components\Section::make('Associations')->schema([
+                        TextEntry::make('category.name'),
+                        TextEntry::make('brand.name'),
+                    ]),
+                    \Filament\Infolists\Components\Section::make('Status')->schema([
+                        Grid::make()->schema([
+                            IconEntry::make('in_stock')->boolean(),
+
+                            IconEntry::make('is_active')->boolean(),
+
+                            IconEntry::make('is_featured')->boolean(),
+                            IconEntry::make('on_sale')->boolean()
+                        ])
+                    ])
+                ])
             ])->columns(3);
     }
 
@@ -208,6 +261,7 @@ class ProductResource extends Resource
             'index' => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'view' => Pages\ViewProduct::route('/{record}'),
         ];
     }
 }
